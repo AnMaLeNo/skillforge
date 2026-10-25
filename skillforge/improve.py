@@ -17,6 +17,7 @@ from pathlib import Path
 
 from . import ambiguity, detect, jev, transcript
 from .decide import BEHAV, decide
+from .rewrite import llm
 
 TA, TR, TB = 0.85, 0.6, 0.85  # demander si manque/env ≥ TA ou (ambigu ≥ TB et comportement ≥ TR) ; reformuler si comportement ≥ TR
 STALL = ("bloqu", "manque", "je suppose", "j'ai supposé", "je ne sais", "permission denied", "impossible", "précis",
@@ -60,6 +61,14 @@ def extracts(steps, n=5) -> list[dict]:
             for t in s.tools:
                 if t.get("name", "").endswith("run_report") or "needs_human" in json.dumps(t.get("input"), ensure_ascii=False):
                     hits.append({"step": s.i, "kind": "tool_use", "text": json.dumps(t.get("input"), ensure_ascii=False)[:900]})
+    if not hits:  # l'agent n'a rien signalé : on montre ce qu'il a écrit et sa conclusion, pas de trou à combler par le rédacteur
+        writes = [t["input"].get("file_path") or t["input"].get("path") for s in steps if s.kind == "tool_use"
+                  for t in s.tools if t.get("name") in ("Write", "Edit") and isinstance(t.get("input"), dict)]
+        if writes:
+            hits.append({"step": 0, "kind": "fichiers_ecrits", "text": ", ".join(dict.fromkeys(w for w in writes if w))})
+        last = next((s for s in reversed(steps) if s.kind == "assistant" and s.text.strip()), None)
+        if last:
+            hits.append({"step": last.i, "kind": "assistant", "text": last.text.strip()[:700]})
     return hits[-n:]  # les derniers : c'est là que l'agent conclut / se bloque
 
 
@@ -131,3 +140,40 @@ if __name__ == "__main__":
     a = ap.parse_args()
     r = improve(a.skill, a.trace, a.report)
     print(json.dumps(r, ensure_ascii=False, indent=1) if a.json else render_md(r))
+
+
+def question_prompt(p: dict, skill_text: str) -> str:
+    return f"""Tu aides l'auteur d'une skill (instructions données seules à un agent de code). Un agent a suivi sa skill et s'est retrouvé dans la situation ci-dessous. Il manque une information ou une décision que seul l'auteur peut donner : NE L'INVENTE PAS.
+
+SKILL (extrait concerné) : {json.dumps(p.get("passage"), ensure_ascii=False)}
+POURQUOI ON DEMANDE : {" ; ".join(p.get("pourquoi") or [])}
+CE QUE L'AGENT DÉCLARE : {p.get("ce_que_l_agent_declare") or "(rien)"}
+EXTRAITS BRUTS DE LA TRACE :
+{chr(10).join("- " + e["text"][:500].replace(chr(10), " ") for e in p.get("extraits_trace") or [])}
+
+Écris pour l'auteur, en français, au plus 3 lignes :
+1. une phrase qui dit ce qui s'est passé (uniquement des faits présents dans les extraits, avec les noms exacts) ;
+2. une question unique, concrète, à laquelle il peut répondre en une phrase, et qui, une fois répondue, permettrait de compléter la skill ou de débloquer l'agent.
+Réponds avec exactement ce format :
+FAIT : ...
+QUESTION : ..."""
+
+
+def draft_question(p: dict, skill_text: str, *, tag: str = "") -> dict:
+    """Sonnet rédige (sans outil) ; JEV contrôle : pas de fait inventé, question répondable en une phrase."""
+    text, meta = llm(question_prompt(p, skill_text), budget=0.05)
+    m = re.search(r"FAIT\s*:\s*(.*?)\s*QUESTION\s*:\s*(.*)", text, re.S)
+    fait, question = (m.group(1).strip(), m.group(2).strip()) if m else ("", text.strip())
+    chk = jev.answers(jev.ask({"extraits": [e["text"][:600] for e in p.get("extraits_trace") or []],
+                               "declaration_agent": p.get("ce_que_l_agent_declare") or "", "passage_skill": p.get("passage"),
+                               "fait_redige": fait, "question_redigee": question}, {
+        "invente": jev.noul("Le FAIT rédigé affirme quelque chose (nom, cause, valeur, action) qui n'apparaît ni dans les extraits ni dans la déclaration de l'agent.",
+                            true="Au moins un élément du fait rédigé n'a pas de source dans les extraits ou la déclaration.",
+                            false="Chaque élément du fait rédigé se retrouve dans les extraits ou la déclaration."),
+        "repondable": jev.noul("La question peut recevoir une réponse utile en une seule phrase de l'auteur de la skill.",
+                               true="Une question unique, concrète, qui attend une décision ou une information précise.",
+                               false="Plusieurs questions, ou une question vague (« que faire ? ») sans objet précis."),
+    }, tag=f"qcheck:{tag}"))
+    ok = chk["invente"]["noul"] < 0.5 and chk["repondable"]["noul"] >= 0.5
+    return {"fait": fait, "question": question if ok else p["question"], "rejetee": None if ok else question,
+            "cost_usd": meta.get("total_cost_usd"), "jev_invente": chk["invente"]["noul"], "jev_repondable": chk["repondable"]["noul"]}

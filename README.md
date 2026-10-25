@@ -49,3 +49,22 @@ Corpus : 20 tâches × {base, proc, 2 défauts injectés à ligne connue} = 80 �
   contradiction mais ne peut pas savoir seule quel nom de fichier est le vrai objectif.
 
 Limites : tâches faciles (pas d'échec naturel), vérité terrain synthétique, un seul run par skill.
+
+## Décision « rien / reformuler / demander » et question à l'auteur (ajout du 25/10)
+
+Principe (fixé par l'utilisateur) : quand l'information manque dans la skill, on ne l'invente pas, on la demande à l'auteur.
+`skillforge/decide.py` mesure la règle de décision sur 106 cas étiquetés (61 rien, 34 reformuler, 11 demander : défauts
+injectés c1, corpus dur, runs réels du projet infra). Traits = 6 comportements + 3 questions contexte JEV
+(`missing_context`, `ambiguous`, `blocked_by_env`). Seuils calibrés sur une moitié des tâches, mesurés sur l'autre
+(deux découpages) : **exactitude équilibrée 0,80** sur held-out dans les deux sens ; rapport dans `docs/decide-report-2026-10-25.txt`.
+
+`python -m skillforge.improve SKILL.md TRACE [--report run.json]` enchaîne tout : JEV → décision → `rien`, `reformuler`
+(passage + preuves) ou `demander` (paquet auteur : passage, pourquoi, extraits bruts, question). `improve.draft_question`
+fait rédiger la question par Sonnet (sans outil, ~0,01 $) puis JEV vérifie « n'invente aucun fait » et « répondable en une
+phrase » ; sinon retour à la question générique assemblée par code. Sur 9 cas réels : 8 acceptées, 1 rejetée à tort.
+
+`skillforge/ambiguity.py` : historique Q/R **par skill** (`runs/qa_history.jsonl`), `already_answered` (JEV retrouve une
+réponse déjà donnée : 0,72 sur le cas réel, « aucune » ≥ 0,89 sur 5 autres besoins), `scope_of` (réponse ponctuelle vs
+règle générale à intégrer à la skill : 0,07 vs 0,79 sur le même contenu reformulé).
+
+Non prouvé : la boucle fermée réponse → skill → relance sans blocage (attend un prochain blocage réel).
