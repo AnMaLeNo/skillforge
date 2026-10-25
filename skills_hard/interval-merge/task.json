@@ -1,0 +1,16 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "merged.txt",
+ "seed_files": {
+  "intervals.txt": "5 8\n1 3\n2 6\n10 12\n12 15\n20 21\n14 14\n30 35\n31 32\n"
+ },
+ "check": "python3 -c \"import sys; got=[tuple(map(int,l.split())) for l in open('merged.txt') if l.strip()]; sys.exit(0 if got==[(1, 8), (10, 15), (20, 21), (30, 35)] else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  }
+ }
+}

@@ -1,0 +1,16 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "weeks.json",
+ "seed_files": {
+  "events.txt": "2024-12-30\n2024-12-31\n2025-01-01\n2025-01-05\n2025-01-06\n2024-02-29\n2024-03-01\n2021-01-03\n2021-01-04\n2020-12-31\n2026-01-01\n2026-01-04\n"
+ },
+ "check": "python3 -c \"import json,sys; sys.exit(0 if json.load(open('weeks.json'))=={'2025-W01': 4, '2025-W02': 1, '2024-W09': 2, '2020-W53': 2, '2021-W01': 1, '2026-W01': 2} else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  }
+ }
+}

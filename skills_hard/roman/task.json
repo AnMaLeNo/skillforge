@@ -1,0 +1,16 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "roman.py",
+ "seed_files": {
+  "README.txt": "Module attendu : roman.py avec to_roman(int)->str et from_roman(str)->int.\n"
+ },
+ "check": "python3 -c \"import sys,roman; ok=all(roman.to_roman(v)==k and roman.from_roman(k)==v for k,v in {'MCMXCIV': 1994, 'XLII': 42, 'MMXXIV': 2024, 'IV': 4, 'XC': 90, 'CDXLIV': 444, 'MMMCMXCIX': 3999}.items())\nfor b in ['IIII', 'VX', 'IC', 'MMMM', '', 'abc', 'IXI']:\n    try: roman.from_roman(b); ok=False\n    except ValueError: pass\n    except Exception: ok=False\nsys.exit(0 if ok else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  }
+ }
+}

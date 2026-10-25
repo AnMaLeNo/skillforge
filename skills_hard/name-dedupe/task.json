@@ -1,0 +1,16 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "unique.txt",
+ "seed_files": {
+  "contacts.txt": "Élodie Martin <Elodie.Martin@Example.com>\nelodie martin <elodie.martin@example.com>\nJean  Dupont <jean.dupont@example.com>\nJean Dupont <JEAN.DUPONT@example.com >\nZoé Durand <zoe.durand@example.com>\nZoe Durand <zoe.durand@example.com>\nMarc Petit <marc.petit@example.com>\nMarc Petit <marc.petit@sample.com>\n"
+ },
+ "check": "python3 -c \"import sys; got=[l.rstrip('\\n') for l in open('unique.txt') if l.strip()]; exp=['Élodie Martin <Elodie.Martin@Example.com>','Jean  Dupont <jean.dupont@example.com>','Zoé Durand <zoe.durand@example.com>','Marc Petit <marc.petit@example.com>','Marc Petit <marc.petit@sample.com>']; sys.exit(0 if got==exp else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  }
+ }
+}
