@@ -1,0 +1,12 @@
+{
+ "2026-10-21T214021.227547+0000-catacombes": "demander",
+ "2026-10-21T223808.142789+0000-catacombes": "demander",
+ "2026-10-22T203740.822779+0000-catacombes": "rien",
+ "2026-10-25T152925.631812+0000-shared.mqtt": "demander",
+ "2026-10-25T153107.153109+0000-shared.mqtt": "demander",
+ "2026-10-25T153310.067359+0000-shared.mqtt": "demander",
+ "2026-10-25T155329.871420+0000-pc-power-controller": "rien",
+ "2026-10-25T155614.953402+0000-fan-controller": "rien",
+ "2026-10-25T175343.887806+0000-naturopathe-website": "rien",
+ "2026-10-25T183338.494936+0000-notes-app": "rien"
+}

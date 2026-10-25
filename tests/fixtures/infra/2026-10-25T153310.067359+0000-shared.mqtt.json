@@ -1,0 +1,52 @@
+{
+  "project": "shared.mqtt",
+  "started": "2026-10-25T15:33:10.067359+00:00",
+  "skills": [
+    "shared-service"
+  ],
+  "before": {
+    "kind": "mqtt-broker",
+    "enabled": true,
+    "listen": [
+      "lan",
+      "tailnet"
+    ],
+    "port": 1883,
+    "auth": "anonymous",
+    "data": true,
+    "image": null,
+    "container": null,
+    "compose_file": "docker-compose.yml",
+    "notes": "Broker MQTT unique du Pi. Clients hors Docker : 2 ESP8266 sur le LAN (192.168.1.98 = pc-power, 192.168.1.78 = fan) avec 192.168.1.101:1883 en dur, sans auth. Topic retenu critique : bureau/fan/speed/set (dernière consigne) ; status online/offline retenus avec last-will. LEGACY : docker compose dans /home/amonot/mosquitto (conteneur mqtt_broker, eclipse-mosquitto:2.1-alpine, port 1883 sur 0.0.0.0, volume nommé mosquitto_mosquitto_data = messages retenus, conf allow_anonymous + persistence). Migration autorisée : migrer la persistance, arrêter l ancien dans la même minute, vérifier la reconnexion des ESP (docker logs) et le message retenu (mosquitto_sub --retained-only)."
+  },
+  "after": {
+    "kind": "mqtt-broker",
+    "enabled": true,
+    "listen": [
+      "lan",
+      "tailnet"
+    ],
+    "port": 1883,
+    "auth": "anonymous",
+    "data": true,
+    "image": null,
+    "container": null,
+    "compose_file": "docker-compose.yml",
+    "notes": "Broker MQTT unique du Pi. Clients hors Docker : 2 ESP8266 sur le LAN (192.168.1.98 = pc-power, 192.168.1.78 = fan) avec 192.168.1.101:1883 en dur, sans auth. Topic retenu critique : bureau/fan/speed/set (dernière consigne) ; status online/offline retenus avec last-will. LEGACY : docker compose dans /home/amonot/mosquitto (conteneur mqtt_broker, eclipse-mosquitto:2.1-alpine, port 1883 sur 0.0.0.0, volume nommé mosquitto_mosquitto_data = messages retenus, conf allow_anonymous + persistence). Migration autorisée : migrer la persistance, arrêter l ancien dans la même minute, vérifier la reconnexion des ESP (docker logs) et le message retenu (mosquitto_sub --retained-only)."
+  },
+  "prompt": "Tu es l'agent de déploiement de l'hôte `pi` (outil `infra`). Répertoire courant : /srv/infra (repo de config).\nContexte à lire d'abord : /srv/infra/tool/README.md puis /srv/infra/tool/docs/conventions.md.\n\nObjectif : amener le SERVICE PARTAGÉ `mqtt` (shared.yaml, un seul exemplaire sur l'hôte) à l'état voulu ci-dessous.\nTu as carte blanche sur le chemin ; le skill décrit le but et l'état cible, pas une procédure.\n\nEntrée de shared.yaml AVANT :\n```yaml\nmqtt:\n  kind: mqtt-broker\n  enabled: true\n  listen:\n  - lan\n  - tailnet\n  port: 1883\n  auth: anonymous\n  data: true\n  image: null\n  container: null\n  compose_file: docker-compose.yml\n  notes: \"Broker MQTT unique du Pi. Clients hors Docker : 2 ESP8266 sur le LAN (192.168.1.98\\\n    \\ = pc-power, 192.168.1.78 = fan) avec 192.168.1.101:1883 en dur, sans auth. Topic\\\n    \\ retenu critique : bureau/fan/speed/set (derni\\xE8re consigne) ; status online/offline\\\n    \\ retenus avec last-will. LEGACY : docker compose dans /home/amonot/mosquitto\\\n    \\ (conteneur mqtt_broker, eclipse-mosquitto:2.1-alpine, port 1883 sur 0.0.0.0,\\\n    \\ volume nomm\\xE9 mosquitto_mosquitto_data = messages retenus, conf allow_anonymous\\\n    \\ + persistence). Migration autoris\\xE9e : migrer la persistance, arr\\xEAter l\\\n    \\ ancien dans la m\\xEAme minute, v\\xE9rifier la reconnexion des ESP (docker logs)\\\n    \\ et le message retenu (mosquitto_sub --retained-only).\"\n```\nEntrée de shared.yaml APRÈS (état voulu) :\n```yaml\nmqtt:\n  kind: mqtt-broker\n  listen:\n  - lan\n  - tailnet\n  port: 1883\n  notes: \"Broker MQTT unique du Pi. Clients hors Docker : 2 ESP8266 sur le LAN (192.168.1.98\\\n    \\ = pc-power, 192.168.1.78 = fan) avec 192.168.1.101:1883 en dur, sans auth. Topic\\\n    \\ retenu critique : bureau/fan/speed/set (derni\\xE8re consigne) ; status online/offline\\\n    \\ retenus avec last-will. LEGACY : docker compose dans /home/amonot/mosquitto\\\n    \\ (conteneur mqtt_broker, eclipse-mosquitto:2.1-alpine, port 1883 sur 0.0.0.0,\\\n    \\ volume nomm\\xE9 mosquitto_mosquitto_data = messages retenus, conf allow_anonymous\\\n    \\ + persistence). Migration autoris\\xE9e : migrer la persistance, arr\\xEAter l\\\n    \\ ancien dans la m\\xEAme minute, v\\xE9rifier la reconnexion des ESP (docker logs)\\\n    \\ et le message retenu (mosquitto_sub --retained-only).\"\n```\nProjets qui le consomment (`uses:`) : fan-controller, pc-power-controller.\n\nSkills à satisfaire :\n- shared-service → /srv/infra/tool/skills/shared-service/SKILL.md\n\nLes choix humains (kind, listen, port, auth, data) sont fixés : tu ne les changes pas ; s'ils sont incohérents ou\nincomplets (ex. `listen: [lan]` sans `lan_ip` dans host.yaml), termine `bloqué` avec la question précise.\nLe *comment* (image, container, compose_file) est à toi : écris-le avec shared_set.\n\nTu disposes du serveur MCP `infra` (shared_get/shared_set/shared_status, host_addresses, host_info, registry_get,\nsecrets_keys, stack_status…) et de Bash (docker compose, ss, git, curl, sudo limité).\n\nRègles : constate l'état réel d'abord (shared_status) et n'agis que sur l'écart ; n'écoute jamais sur 0.0.0.0 ;\nn'affiche jamais la valeur d'un secret ; n'invente pas de valeur manquante. Termine par un résumé : fait, vérifié,\nfait à la main (candidats à devenir des tools), reste à un humain.\n\nClôture obligatoire : termine par UN appel au tool `run_report(project='shared.mqtt', status=ok|bloqué|échec, summary, needs_human)`.\n`ok` seulement si l'état cible est atteint et vérifié ; `bloqué` s'il manque quelque chose à un humain (rien de cassé) ;\n`échec` sinon. Sans cet appel, le run compte comme échec.",
+  "model": "sonnet",
+  "effort": "high",
+  "session_id": "d73e16f6-88fe-4412-b498-d190de2c9300",
+  "cost_usd": 0.2458375,
+  "duration_ms": 110026,
+  "num_turns": 24,
+  "is_error": false,
+  "result": "Le service partagé `mqtt` tourne en un seul exemplaire et fonctionne, mais le run est clos `bloqué`. Je n'ai pas pu commiter ni pousser les fichiers dans le repo de config, car `/srv/infra/.git` appartient à root et `ai-infra` n'y a pas accès en écriture.\n\n**Fait**\n- Le broker `shared-mqtt` (eclipse-mosquitto:2.1-alpine) est `healthy`. Il est publié uniquement sur 192.168.1.101:1883 et 100.72.6.43:1883, jamais sur 0.0.0.0, et son alias `mqtt` sur `traefik-net` est bon.\n- La persistance est migrée du volume legacy `mosquitto_mosquitto_data` vers `/srv/shared/mqtt/data`. L'ancien conteneur `mqtt_broker` est arrêté puis supprimé, et la bascule a pris moins de 2 s. J'ai gardé le volume legacy comme sauvegarde.\n- J'ai écrit `shared/mqtt/docker-compose.yml` et `shared/mqtt/config/mosquitto.conf`. `shared_set` a consigné `image`, `container` et `compose_file` dans `shared.yaml`.\n\n**Vérifié**\n- `shared_status` confirme `listening` égal à `listen_wanted`, avec `on_all_interfaces` faux.\n- Les logs montrent « Restored 2 retained messages ».\n- Les deux ESP (192.168.1.98 et 192.168.1.78) se sont reconnectés en 5 s, sans déconnexion depuis.\n- `mosquitto_sub --retained-only` renvoie `bureau/fan/speed/set 0` et `bureau/fan/status online`, aussi bien sur l'IP LAN que sur l'IP tailnet.\n\n**Fait à la main (candidats à devenir des tools)**\n- Copie de persistance d'un volume nommé vers un bind mount, avec chown, via un conteneur root éphémère.\n- Arrêt et suppression du conteneur legacy.\n- Commit et push du repo de config.\n\n**Reste à un humain**\n- Commiter et pousser les changements en attente (`shared.yaml` et le dossier `shared/mqtt/`), ou rendre `.git` inscriptible par `ai-infra`. Sans ce commit, l'hôte ne se reconstruit pas depuis le repo.\n- Plus tard, supprimer le volume legacy `mosquitto_mosquitto_data` et `/home/amonot/mosquitto`, que je ne peux pas lire.\n\nLa commande de commit est dans `run_report`.",
+  "stderr": "",
+  "status": "bloqué",
+  "needs_human": "Rendre /srv/infra/.git inscriptible par ai-infra (ex. sudo chown -R :infra /srv/infra/.git avec g+w), ou commiter et pousser à la main depuis /srv/infra : `git add shared.yaml shared/mqtt && git commit -m \"shared: mqtt installé (compose, conf, image 2.1-alpine, persistance migrée)\" && git push`. Éventuellement, après quelques jours, supprimer le volume legacy mosquitto_mosquitto_data (docker volume rm) et le dossier /home/amonot/mosquitto, que je ne peux pas lire.",
+  "report": "FAIT : le service partagé mqtt tourne en un seul exemplaire (projet compose shared-mqtt, conteneur shared-mqtt, eclipse-mosquitto:2.1-alpine, healthy). Il est publié uniquement sur 192.168.1.101:1883 (lan) et 100.72.6.43:1883 (tailnet), sans 0.0.0.0. L'alias mqtt sur traefik-net est bon (alias_ok), et l'accès est anonyme comme voulu.\nLa persistance a été migrée du volume legacy mosquitto_mosquitto_data vers le bind mount /srv/shared/mqtt/data (chown 1883, uid mosquitto). Le conteneur legacy mqtt_broker a été arrêté puis supprimé, avec la bascule faite en moins de 2 s. Le volume legacy est conservé comme sauvegarde. Les fichiers shared/mqtt/{docker-compose.yml,config/mosquitto.conf} ont été écrits dans /srv/infra. shared_set a consigné image, container et compose_file dans shared.yaml.\nVÉRIFIÉ : shared_status donne running/healthy, listening == listen_wanted et on_all_interfaces faux. Les logs montrent « Restored 2 retained messages », et les deux ESP (192.168.1.98 et 192.168.1.78) se sont reconnectés en 5 s sans déconnexion depuis. mosquitto_sub --retained-only sur la IP LAN et sur la IP tailnet renvoie bureau/fan/speed/set=0 et bureau/fan/status=online.\nNON FAIT : le commit et le push dans le repo de config. /srv/infra/.git appartient à root (drwxr-xr-x root:infra), donc ai-infra ne peut pas créer index.lock, et le CLI infra n'a pas de commande de commit. Je n'ai pas contourné cette permission. Modifications non commitées : shared.yaml (image, container, compose_file) et le dossier shared/mqtt/ (non suivi). Sans ce commit, l'hôte ne se reconstruit pas depuis le repo, et le skill l'exige.\nÀ LA MAIN (candidats à tools) : la copie de persistance d'un volume nommé vers un bind mount avec chown via un conteneur root éphémère (docker run --user root --entrypoint sh -v vol:/src:ro -v dir:/dst), puis l'arrêt et la suppression du conteneur legacy (docker stop, docker update --restart=no, docker rm). Aussi : un tool git commit/push du repo de config.",
+  "ok": false,
+  "finished": "2026-10-25T15:35:02.760003+00:00"
+}

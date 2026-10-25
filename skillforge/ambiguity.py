@@ -64,17 +64,22 @@ def analyse(skill_text: str, steps: list[transcript.Step], rec: dict | None = No
     return {"flags": {k: a[k] for k in QUESTIONS}, "where": a["where"], "lines": dict(lines)}
 
 
-def history(skill_id: str) -> list[dict]:
+def _hist(store=None) -> Path:
+    return Path(store) / "qa_history.jsonl" if store else HIST
+
+
+def history(skill_id: str, store=None) -> list[dict]:
     """Entrées Q/R de la skill (clé = chemin de skill, ex. `expose/public`), dans l'ordre d'enregistrement."""
-    if not HIST.exists():
+    h = _hist(store)
+    if not h.exists():
         return []
-    return [e for e in (json.loads(l) for l in HIST.read_text().splitlines() if l.strip()) if e["skill"] == skill_id]
+    return [e for e in (json.loads(l) for l in h.read_text().splitlines() if l.strip()) if e["skill"] == skill_id]
 
 
-def already_answered(skill_id: str, need: str, *, tag: str = "") -> dict:
+def already_answered(skill_id: str, need: str, *, tag: str = "", store=None) -> dict:
     """JEV : une réponse déjà donnée par l'auteur couvre-t-elle ce besoin ? Choice sur l'historique + `none`.
     Renvoie {entry|None, choice, probabilities} ; sans historique → entry None sans appel."""
-    h = history(skill_id)
+    h = history(skill_id, store)
     if not h:
         return {"entry": None, "choice": "none", "probabilities": {}}
     crit = {f"R{i+1}": f"Question : {e['question'][:200]} / Réponse de l'auteur : {e['answer'][:250]}" for i, e in enumerate(h)}
@@ -102,9 +107,10 @@ def scope_of(skill_text: str, question: str, answer: str, *, tag: str = "") -> d
 
 
 def record_answer(skill_id: str, question: str, answer: str, *, passage: str | None = None,
-                  run: str | None = None, scope: str | None = None) -> None:
-    HIST.parent.mkdir(parents=True, exist_ok=True)
-    with HIST.open("a") as f:
+                  run: str | None = None, scope: str | None = None, store=None) -> None:
+    h = _hist(store)
+    h.parent.mkdir(parents=True, exist_ok=True)
+    with h.open("a") as f:
         f.write(json.dumps({"skill": skill_id, "question": question, "answer": answer, "passage": passage,
                             "run": run, "scope": scope}, ensure_ascii=False) + "\n")
 

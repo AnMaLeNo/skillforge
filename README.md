@@ -68,3 +68,26 @@ réponse déjà donnée : 0,72 sur le cas réel, « aucune » ≥ 0,89 sur 5 aut
 règle générale à intégrer à la skill : 0,07 vs 0,79 sur le même contenu reformulé).
 
 Non prouvé : la boucle fermée réponse → skill → relance sans blocage (attend un prochain blocage réel).
+
+## Contrat et API (brique générique, v1)
+
+skillforge ne connaît aucun client : il reçoit un **Episode** (skills utilisées, trace brute Claude Code — session `.jsonl`
+ou stream-json —, rapport déclaré par l'agent s'il existe, vérification s'il y en a une) et rend un **Verdict**
+(`rien | reformuler | demander | indisponible`, scores, passage de skill, extraits bruts, question, réponse d'historique,
+patch proposé en diff, coût). Modèles pydantic dans `skillforge/contract.py`, schémas via `skillforge schema`.
+
+```bash
+pip install git+https://github.com/AnMaLeNo/skillforge
+skillforge improve --skill SKILL.md --trace session.jsonl [--report report.json] [--store .skillforge] [--llm]
+skillforge answer  --skill SKILL.md --skill-id expose/public --question "…" --answer "…"   # portée + patch si générale
+skillforge episode episode.json                                                           # depuis un Episode JSON
+```
+
+API : `skillforge.api.improve(episode, store=…) -> Verdict`, `answer(Answer, store=…, skill_text=…) -> AnswerResult`,
+`replay([...])`. Tout l'état (historique Q/R, journal et cache JEV) est dans `store`, fourni par le client ; skillforge
+n'applique jamais un patch lui-même. `indisponible` (JEV absent, trace illisible…) est une sortie normale : le client
+ne doit pas échouer à cause de skillforge.
+
+Tests : `tests/fixtures/infra/` = 10 runs réels du client infra (secrets masqués) ; `pytest tests/test_contract.py`
+(hors ligne) ; `pytest tests/test_replay.py` (JEV, ~0,01 $) vérifie que les 5 runs bloqués donnent `demander` et les
+5 autres non, et fige les verdicts dans `tests/fixtures/infra-verdicts.json`.
