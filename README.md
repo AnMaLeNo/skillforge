@@ -31,3 +31,21 @@ export CLAUDE_CODE_OAUTH_TOKEN=…     # claude setup-token
 python3 -m skillforge.corpus          # génère skills/
 python3 -m skillforge.campaign c1 --parallel 4
 ```
+
+## Résultats mesurés (campagne 1, 2026-10-25)
+
+Corpus : 20 tâches × {base, proc, 2 défauts injectés à ligne connue} = 80 épisodes Sonnet 5.5 (~3,2 $ équivalent API).
+
+- base / proc : 100 % de réussite ; l'agent obéit aux instructions nuisibles (s'arrêter pour demander 0/6,
+  interdit de créer des fichiers 0/5, ne pas vérifier 6/6 obéi, travail en trop ×2 coût) et ignore les
+  détails faux en le disant dans sa réponse finale (étape fausse 5/5, pandas imposé 6/6).
+- Détection JEV (6 Noul, `detect.py`) : AUROC 0,87–0,99 selon la question ; une partie des « fausses alertes »
+  sont des labels trop stricts (vérifié par signal code).
+- Localisation (Choice sur lignes + « none ») : top-1 37/40, top-3 40/40, stable à la permutation 78/80 ;
+  sur skills saines « none » n'est en tête que 29/40 → décider « problème ? » avant de localiser.
+- Réécriture (`rewrite.py`, 20 skills, 2 axes, sélection JEV par paires en aveugle) : réussite 10/20 → 17/20,
+  comportement signalé absent sur 20/20 relances ; axe « objectif + contexte » choisi 18/20.
+  Les 3 échecs sont des contradictions internes résolues du mauvais côté : la pipeline localise la
+  contradiction mais ne peut pas savoir seule quel nom de fichier est le vrai objectif.
+
+Limites : tâches faciles (pas d'échec naturel), vérité terrain synthétique, un seul run par skill.
