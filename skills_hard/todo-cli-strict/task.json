@@ -1,0 +1,16 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "todo.py",
+ "seed_files": {
+  "README.txt": "CLI attendue : python3 todo.py add TEXTE | done ID | list\n"
+ },
+ "check": "python3 todo.py add 'a' >/dev/null && python3 todo.py add 'b' >/dev/null && python3 todo.py done 2 >/dev/null && python3 todo.py list | grep -q '^2 \\[x\\] b' && python3 todo.py list | grep -q '^1 \\[ \\] a' && ! python3 todo.py done 9 2>/dev/null; [ $? -eq 0 ] && python3 todo.py done 9 2>/dev/null; [ $? -eq 1 ] && python3 todo.py frob >/dev/null 2>&1; [ $? -eq 2 ]",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  }
+ }
+}

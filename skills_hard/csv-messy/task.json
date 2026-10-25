@@ -1,0 +1,16 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "total.txt",
+ "seed_files": {
+  "ventes.csv": "﻿id;label;amount\n1;\"Dupont, Jean\";1 234,56\n\n2;Martin;(45,30)\n3;Durand;7\n4;\"O'Neil\";99,99\n5;Petit;(1 000,00)\n6;Roux;12,5\n\n7;Blanc;3,25\n8;Noir;850,10\n"
+ },
+ "check": "python3 -c \"import sys; v=float(open('total.txt').read().split()[0]); sys.exit(0 if abs(v-1162.1)<0.005 else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  }
+ }
+}

@@ -1,0 +1,47 @@
+{
+  "project": "fan-controller",
+  "started": "2026-10-25T15:56:14.953402+00:00",
+  "skills": [
+    "service/compose",
+    "expose/private"
+  ],
+  "before": null,
+  "after": {
+    "repo": "https://github.com/AnMaLeNo/fan_controller",
+    "ref": "main",
+    "enabled": true,
+    "service": "compose",
+    "expose": "private",
+    "domain": null,
+    "container": "frontend",
+    "port": 5173,
+    "previews": "none",
+    "uses": [
+      "mqtt"
+    ],
+    "env": false,
+    "expose_ports": [],
+    "data": [],
+    "compose_file": "docker-compose.yml",
+    "build": null,
+    "static_dir": ".",
+    "consumers": {},
+    "legacy": "docker compose legacy dans /home/legacyuser/fan_controller (illisible pour ai-infra) : conteneurs fan_api (API, port non publié) et fan_frontend (port 18081 publié), réseau fan_controller_iot_net, MQTT via host.docker.internal:1883 qui ne répond plus depuis la migration du broker vers le service partagé mqtt. BASCULE AUTORISÉE : déployer la stack du registre, puis arrêter et supprimer les conteneurs legacy fan_api/fan_frontend (docker stop + docker rm). Aucune donnée persistante à migrer ; la consigne retenue est dans le broker.",
+    "notes": ""
+  },
+  "prompt": "Tu es l'agent de déploiement de l'hôte `pi` (outil `infra`). Répertoire courant : /srv/infra (repo de config).\nContexte à lire d'abord : /srv/infra/tool/README.md puis /srv/infra/tool/docs/conventions.md.\n\nObjectif : amener le projet `fan-controller` à l'état voulu ci-dessous. Tu as carte blanche sur le chemin ;\nles skills décrivent le but et l'état cible à atteindre, pas une procédure.\n\nEntrée du registre AVANT :\n```yaml\nfan-controller: null\n```\nEntrée du registre APRÈS (état voulu) :\n```yaml\nfan-controller:\n  repo: https://github.com/AnMaLeNo/fan_controller\n  service: compose\n  container: frontend\n  port: 5173\n  uses:\n  - mqtt\n  legacy: \"docker compose legacy dans /home/legacyuser/fan_controller (illisible pour\\\n    \\ ai-infra) : conteneurs fan_api (API, port non publi\\xE9) et fan_frontend (port\\\n    \\ 18081 publi\\xE9), r\\xE9seau fan_controller_iot_net, MQTT via host.docker.internal:1883\\\n    \\ qui ne r\\xE9pond plus depuis la migration du broker vers le service partag\\xE9\\\n    \\ mqtt. BASCULE AUTORIS\\xC9E : d\\xE9ployer la stack du registre, puis arr\\xEA\\\n    ter et supprimer les conteneurs legacy fan_api/fan_frontend (docker stop + docker\\\n    \\ rm). Aucune donn\\xE9e persistante \\xE0 migrer ; la consigne retenue est dans\\\n    \\ le broker.\"\n```\n\nSkills à satisfaire :\n- service/compose → /srv/infra/tool/skills/service/compose/SKILL.md\n- expose/private → /srv/infra/tool/skills/expose/private/SKILL.md\n\nLe *comment* est à toi : `container`, `port`, `compose_file`, `build`, `static_dir` sont des constats que tu\ndéduis du repo (compose, Dockerfile, package.json…) et que tu écris dans le registre avec registry_set — l'utilisateur\nne les saisit pas et ne les connaît pas.\n\nTu disposes du serveur MCP `infra` (tools atomiques : repo_sync, compose_override, traefik_labels, env_decrypt,\ndns_ensure/dns_prune/dns_list, registry_get/registry_set, project_status, host_info, secrets_keys…) et de Bash\n(docker compose, git, curl, sudo limité). Les tools sont des raccourcis fiables pour les gestes répétitifs ; si l'un\nne convient pas au projet, il te le dira : fais alors autrement, à la main, et dis-le dans ton résumé.\n\nRègles : commence par constater l'état réel (project_status) et n'agis que sur l'écart ; ne publie jamais de port ;\nn'affiche jamais la valeur d'un secret ; n'invente pas de valeur manquante (termine en échec avec la question précise) ;\nne modifie pas le repo du projet sauf cas prévu par un skill (PR). Termine par un résumé : ce qui a été fait,\nles URLs, ce que tu as dû faire à la main (candidats à devenir des tools), ce qu'il reste à un humain.\n\nClôture obligatoire : termine par UN appel au tool `run_report(project='fan-controller', status=ok|bloqué|échec, summary, needs_human)`.\n`ok` seulement si l'état cible est atteint et vérifié ; `bloqué` s'il manque quelque chose à un humain (rien de cassé) ;\n`échec` sinon. Sans cet appel, le run compte comme échec.",
+  "model": "sonnet",
+  "effort": "high",
+  "session_id": "d030452a-2a1c-502d-0983-7feb2db72914",
+  "cost_usd": 0.2596552000000001,
+  "duration_ms": 140898,
+  "num_turns": 25,
+  "is_error": false,
+  "result": "`fan-controller` est déployé et vérifié ; j'ai clos le run avec le statut `ok`.\n\n- **URL privée :** https://fan-controller.pi.example.net. Sans `-k` depuis l'hôte, avec `curl --resolve` vers l'IP Tailscale, elle répond 200 avec un certificat Let's Encrypt valide. Je ne l'ai pas testée depuis un autre appareil du tailnet.\n- **État :** `api` et `frontend` sont healthy et aucun port n'est publié (18081 est libre). L'API est connectée au broker partagé `mqtt:1883` et le message retenu `bureau/fan/speed/set` est bien présent.\n- **Registre :** j'ai corrigé `compose_file` en `docker-compose.yaml` (il disait `.yml`) et ajouté `consumers` pour `api` (`MQTT_HOST=mqtt`, `MQTT_PORT=1883`).\n- **Bascule :** j'ai arrêté et supprimé `fan_api` et `fan_frontend` (legacy) **avant** le `up`, pas après. Le compose du projet fixe les mêmes `container_name`, donc le `up` aurait échoué. J'avais construit les images avant, pour que la coupure reste courte.\n- **Fait à la main :** la suppression des conteneurs legacy et la détection du nom du fichier compose et des variables MQTT. Ce sont des candidats à devenir des tools.\n- **À vérifier par un humain (optionnel) :** je n'ai pas pu lire `/home/legacyuser/fan_controller`. Si quelque chose y relance le compose legacy au démarrage, il faut le désactiver, car il recréerait `fan_api` et `fan_frontend` (`restart: always`).",
+  "stderr": "",
+  "status": "ok",
+  "needs_human": "Optionnel : si le répertoire /home/legacyuser/fan_controller est encore lancé par un `docker compose up` ou un service au démarrage, le désactiver pour qu'il ne recrée pas fan_api et fan_frontend (restart: always). Je n'ai pas pu le lire.",
+  "report": "fan-controller est déployé via son compose (docker-compose.yaml, commit e503c63) et la bascule depuis le legacy est faite.\n\nURL privée : https://fan-controller.pi.example.net. Vérifié avec curl --resolve vers 10.0.1.1, sans -k : 200 et certificat Let's Encrypt valide, émis à 15:58Z pour ce domaine. L'URL n'a pas été testée depuis un autre appareil du tailnet.\n\nFait :\n- repo_sync, puis constats consignés avec registry_set : compose_file corrigé en `docker-compose.yaml` (le registre disait `.yml`) et consumers = {api: {MQTT_HOST: mqtt, MQTT_PORT: 1883}}. container=frontend et port=5173 étaient déjà justes (nginx EXPOSE 5173).\n- compose_override a produit un override propre : ports neutralisés, restart unless-stopped, labels Traefik private sur frontend, traefik-net sur frontend et api, variables MQTT sur api.\n- Images construites avec `docker compose build` avant toute coupure.\n- Legacy fan_frontend et fan_api arrêtés puis supprimés (docker stop + docker rm), puis `up -d --build`. J'ai dû les arrêter avant le `up` : le compose fixe `container_name: fan_api` et `fan_frontend`, les mêmes noms que le legacy, d'où un conflit autrement. C'est un écart à l'ordre « déployer puis arrêter » du registre, sans autre conséquence.\n- api et frontend sont healthy, `published_ports` est vide et le port 18081 est libre.\n- L'API est connectée au broker partagé (`mqtt:1883`) et abonnée à bureau/fan/log et bureau/fan/status. Le message retenu bureau/fan/speed/set (valeur 0) est présent dans le broker, ainsi que bureau/fan/status = online.\n\nÀ la main (candidats à devenir des tools) :\n- Arrêt et suppression des conteneurs legacy avec docker stop/rm, avec détection du conflit de container_name.\n- Détection du nom réel du fichier compose (.yaml vs .yml).\n- Détection des consumers MQTT en lisant le compose et server.js.\n\nNotes :\n- Le compose du projet fixe container_name (fan_api, fan_frontend), ce qui empêche un `up` côté stack tant qu'un legacy de même nom existe.\n- Le répertoire legacy /home/legacyuser/fan_controller n'est pas touché (illisible pour ai-infra).",
+  "ok": true,
+  "finished": "2026-10-25T15:58:38.601497+00:00"
+}

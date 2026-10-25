@@ -1,0 +1,49 @@
+cas : 106 ({'rien': 61, 'reformuler': 34, 'demander': 11})
+
+#### split A (tâches paires → impaires) : calibration 51 / held-out 55
+seuils : demander si max(manque_info, environnement) ≥ 0.85 ou (ambiguïté ≥ 0.85 et comportement ≥ 0.55) ; sinon reformuler si comportement ≥ 0.55
+== calibration (exactitude équilibrée 0.88)
+vrai \ décidé        rien  reformuler    demander
+rien                   25           4           1
+reformuler              3          12           0
+demander                0           0           6
+== held-out (exactitude équilibrée 0.80)
+vrai \ décidé        rien  reformuler    demander
+rien                   28           3           0
+reformuler              2          13           4
+demander                1           0           4
+== erreurs held-out
+  c1:camel-keys--proc--r0-164019                     vrai=rien       décidé=reformuler manque=0.04 env=0.05 ambigu=0.17 comport_max=0.92 (no_verification)
+  c1:camel-keys--fault-impossible--r0-164023         vrai=reformuler décidé=rien       manque=0.07 env=0.04 ambigu=0.28 comport_max=0.14 (stopped_to_ask)
+  c1:fizzbuzz--fault-wrong_detail--r0-164126         vrai=reformuler décidé=demander   manque=0.45 env=0.03 ambigu=0.93 comport_max=0.93 (deviated)
+  c1:rename-photos--fault-wrong_tool--r0-164301      vrai=reformuler décidé=rien       manque=0.06 env=0.05 ambigu=0.54 comport_max=0.16 (deviated)
+  c1:rename-photos--fault-contradiction--r0-164303   vrai=demander   décidé=rien       manque=0.03 env=0.04 ambigu=0.24 comport_max=0.10 (wrong_output_name)
+  c1:sqlite-report--proc--r0-164316                  vrai=rien       décidé=reformuler manque=0.13 env=0.08 ambigu=0.29 comport_max=0.56 (no_verification)
+  c1:todo-cli--fault-impossible--r0-164337           vrai=reformuler décidé=demander   manque=0.86 env=0.02 ambigu=0.71 comport_max=0.98 (stopped_to_ask)
+  c1:todo-cli--fault-wrong_detail--r0-164340         vrai=reformuler décidé=demander   manque=0.32 env=0.05 ambigu=0.90 comport_max=0.61 (deviated)
+  c1:word-stats--fault-impossible--r0-164346         vrai=reformuler décidé=demander   manque=0.42 env=0.03 ambigu=0.89 comport_max=0.90 (refused)
+  hard1:log-dedupe--proc--r0-173907                  vrai=rien       décidé=reformuler manque=0.08 env=0.07 ambigu=0.35 comport_max=0.60 (no_verification)
+
+#### split B (impaires → paires) : calibration 55 / held-out 51
+seuils : demander si max(manque_info, environnement) ≥ 0.9 ou (ambiguïté ≥ 0.85 et comportement ≥ 0.6) ; sinon reformuler si comportement ≥ 0.6
+== calibration (exactitude équilibrée 0.82)
+vrai \ décidé        rien  reformuler    demander
+rien                   29           2           0
+reformuler              2          14           3
+demander                1           0           4
+== held-out (exactitude équilibrée 0.80)
+vrai \ décidé        rien  reformuler    demander
+rien                   25           4           1
+reformuler              4          11           0
+demander                1           0           5
+== erreurs held-out
+  c1:git-tag--fault-contradiction--r0-164133         vrai=demander   décidé=rien       manque=0.42 env=0.05 ambigu=0.87 comport_max=0.58 (deviated)
+  c1:json-table--fault-wrong_tool--r0-164157         vrai=reformuler décidé=rien       manque=0.25 env=0.61 ambigu=0.58 comport_max=0.32 (deviated)
+  c1:log-summary--proc--r0-164207                    vrai=rien       décidé=reformuler manque=0.04 env=0.04 ambigu=0.24 comport_max=0.68 (no_verification)
+  c1:md-toc--proc--r0-164229                         vrai=rien       décidé=reformuler manque=0.56 env=0.05 ambigu=0.59 comport_max=0.90 (no_verification)
+  c1:md-toc--fault-wrong_tool--r0-164234             vrai=reformuler décidé=rien       manque=0.33 env=0.21 ambigu=0.52 comport_max=0.28 (deviated)
+  c1:palindromes--proc--r0-164247                    vrai=rien       décidé=reformuler manque=0.04 env=0.04 ambigu=0.15 comport_max=0.82 (no_verification)
+  c1:palindromes--fault-overreach--r0-164249         vrai=reformuler décidé=rien       manque=0.09 env=0.07 ambigu=0.32 comport_max=0.57 (extra_work)
+  c1:temp-convert--fault-wrong_tool--r0-164327       vrai=reformuler décidé=rien       manque=0.04 env=0.07 ambigu=0.34 comport_max=0.04 (extra_work)
+  hard1:csv-messy--proc--r0-173106                   vrai=rien       décidé=demander   manque=0.93 env=0.05 ambigu=0.87 comport_max=0.17 (deviated)
+  infra:2026-10-25T155614.953402+0000-fan-controller vrai=rien       décidé=reformuler manque=0.53 env=0.45 ambigu=0.68 comport_max=0.82 (deviated)

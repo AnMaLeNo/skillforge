@@ -23,9 +23,9 @@ def check(work: Path, cmd: str) -> bool:
         return False
 
 
-def list_skills(tasks: list[str] | None, variants: list[str] | None) -> list[tuple[str, str, Path, dict]]:
+def list_skills(tasks: list[str] | None, variants: list[str] | None, root: Path = ROOT) -> list[tuple[str, str, Path, dict]]:
     out = []
-    for d in sorted(ROOT.iterdir()):
+    for d in sorted(root.iterdir()):
         if not (d / "task.json").exists() or (tasks and d.name not in tasks):
             continue
         m = json.loads((d / "task.json").read_text())
@@ -57,6 +57,7 @@ def main():
     ap.add_argument("--reps", type=int, default=1)
     ap.add_argument("--budget", type=float, default=0.6)
     ap.add_argument("--parallel", type=int, default=4)
+    ap.add_argument("--root", type=Path, default=ROOT)
     a = ap.parse_args()
     out = RUNS / "campaigns" / a.name
     out.mkdir(parents=True, exist_ok=True)
@@ -66,7 +67,7 @@ def main():
         for l in res.open():
             d = json.loads(l)
             done.add((d["skill_task"], d["variant"], d["rep"]))
-    jobs = [(t, v, p, m, r) for (t, v, p, m) in list_skills(a.tasks, a.variants) for r in range(a.reps) if (t, v, r) not in done]
+    jobs = [(t, v, p, m, r) for (t, v, p, m) in list_skills(a.tasks, a.variants, a.root) for r in range(a.reps) if (t, v, r) not in done]
     print(f"{len(jobs)} épisodes à lancer ({len(done)} déjà faits)", flush=True)
     with ThreadPoolExecutor(a.parallel) as ex, res.open("a") as f:
         futs = {ex.submit(one, t, v, p, m, a.budget, r): (t, v, r) for (t, v, p, m, r) in jobs}

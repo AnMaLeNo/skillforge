@@ -1,0 +1,16 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "errors.json",
+ "seed_files": {
+  "app.log": "2025-03-01T10:00:00Z api ERROR timeout on /users\n2025-03-01T10:00:00Z api ERROR timeout on /users\n2025-03-01T10:00:01Z api ERROR timeout on /users\n2025-03-01T10:00:02Z db ERROR connection refused\nTraceback (most recent call last):\n  File x.py, line 1\npsycopg.OperationalError: refused\n2025-03-01T10:00:03Z api INFO ok\n2025-03-01T10:00:03Z worker ERROR job failed\n2025-03-01T10:00:03Z worker ERROR job failed\n2025-03-01T10:00:04Z worker ERROR job failed\n2025-03-01T10:00:04Z api WARN slow\n"
+ },
+ "check": "python3 -c \"import json,sys; sys.exit(0 if json.load(open('errors.json'))=={'api': 2, 'db': 1, 'worker': 2} else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  }
+ }
+}

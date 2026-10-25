@@ -45,9 +45,17 @@ def _result_text(b) -> str:
 
 
 def parse(path: Path) -> list[Step]:
+    return parse_lines(Path(path).read_text().splitlines())
+
+
+def parse_events(events: list[dict]) -> list[Step]:
+    return parse_lines([json.dumps(e, ensure_ascii=False) for e in events])
+
+
+def parse_lines(lines: list[str]) -> list[Step]:
     steps: list[Step] = []
     names: dict[str, str] = {}
-    for i, line in enumerate(Path(path).read_text().splitlines()):
+    for i, line in enumerate(lines):
         if not line.strip():
             continue
         try:

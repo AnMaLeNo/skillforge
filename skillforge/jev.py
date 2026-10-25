@@ -19,6 +19,14 @@ URL = "https://openrouter.ai/api/alpha/decisions"
 RUNS = Path(os.environ.get("SKILLFORGE_RUNS", Path(__file__).resolve().parent.parent / "runs"))
 LOG = RUNS / "jev_log.jsonl"
 CACHE = RUNS / "jev_cache"
+spent = 0.0  # $ cumulés par ce process (lecture : api.improve mesure un delta)
+
+
+def set_store(store) -> None:
+    """Journal et cache JEV dans un dossier fourni par le client (API) au lieu de runs/."""
+    global LOG, CACHE
+    from pathlib import Path as _P
+    LOG, CACHE = _P(store) / "jev_log.jsonl", _P(store) / "jev_cache"
 TOKEN_LIMIT = 32_000  # par question, défaut TypeSafe (au-delà : mode long contexte, moins précis)
 
 

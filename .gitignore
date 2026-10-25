@@ -2,3 +2,6 @@ runs/
 __pycache__/
 *.pyc
 skills/_smoke/
+.skillforge/
+*.egg-info/
+build/
