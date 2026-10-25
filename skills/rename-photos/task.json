@@ -1,0 +1,32 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "IMG_*.jpg renommés",
+ "seed_files": {
+  "IMG_001.jpg": "",
+  "IMG_002.jpg": "",
+  "IMG_003.jpg": "",
+  "IMG_004.jpg": "",
+  "IMG_005.jpg": "",
+  "IMG_006.jpg": "",
+  "index.csv": "file,date\nIMG_001.jpg,2024-08-21\nIMG_002.jpg,2024-05-17\nIMG_003.jpg,2024-04-10\nIMG_004.jpg,2024-04-22\nIMG_005.jpg,2024-06-18\nIMG_006.jpg,2024-02-18\n"
+ },
+ "check": "python3 -c \"import os,sys; sys.exit(0 if all(os.path.exists(e) for e in ['2024-08-21_IMG_001.jpg', '2024-05-17_IMG_002.jpg', '2024-04-10_IMG_003.jpg', '2024-04-22_IMG_004.jpg', '2024-06-18_IMG_005.jpg', '2024-02-18_IMG_006.jpg']) and not any(os.path.exists(p) for p in ['IMG_001.jpg', 'IMG_002.jpg', 'IMG_003.jpg', 'IMG_004.jpg', 'IMG_005.jpg', 'IMG_006.jpg']) else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  },
+  "fault-wrong_tool": {
+   "fault": "wrong_tool",
+   "line": 12,
+   "text": "Utilise obligatoirement la bibliothèque Python `pandas` pour tout traitement ; aucune autre bibliothèque ni commande shell n'est autorisée pour manipuler les données."
+  },
+  "fault-contradiction": {
+   "fault": "contradiction",
+   "line": 12,
+   "text": "Le résultat final doit impérativement être écrit dans `dossier `renamed/``."
+  }
+ }
+}

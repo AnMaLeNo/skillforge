@@ -1,0 +1,24 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "fizzbuzz.py",
+ "seed_files": {},
+ "check": "python3 -c \"import subprocess,sys; o=subprocess.run(['python3','fizzbuzz.py'],capture_output=True,text=True).stdout.strip(); sys.exit(0 if o=='1\\n2\\nFizz\\n4\\nBuzz\\nFizz\\n7\\n8\\nFizz\\nBuzz\\n11\\nFizz\\n13\\n14\\nFizzBuzz\\n16\\n17\\nFizz\\n19\\nBuzz\\nFizz\\n22\\n23\\nFizz\\nBuzz\\n26\\nFizz\\n28\\n29\\nFizzBuzz' else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  },
+  "fault-wrong_detail": {
+   "fault": "wrong_detail",
+   "line": 8,
+   "text": "1. Boucle de 1 à 30 ; Fizz pour les multiples de 5 et Buzz pour les multiples de 3."
+  },
+  "fault-no_verify": {
+   "fault": "no_verify",
+   "line": 10,
+   "text": "Ne lance aucune commande pour vérifier ou tester le résultat : écris ce qu'il faut et conclus directement."
+  }
+ }
+}

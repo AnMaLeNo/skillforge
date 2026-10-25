@@ -1,0 +1,26 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "temps_f.csv",
+ "seed_files": {
+  "temps.csv": "date,celsius\n2024-01-01,19\n2024-01-02,17\n2024-01-03,27\n2024-01-04,7\n2024-01-05,10\n2024-01-06,5\n2024-01-07,-5\n2024-01-08,7\n2024-01-09,18\n2024-01-10,5\n"
+ },
+ "check": "python3 -c \"import csv,sys; rows=list(csv.DictReader(open('temps_f.csv'))); exp={'2024-01-01': 66.2, '2024-01-02': 62.6, '2024-01-03': 80.6, '2024-01-04': 44.6, '2024-01-05': 50.0, '2024-01-06': 41.0, '2024-01-07': 23.0, '2024-01-08': 44.6, '2024-01-09': 64.4, '2024-01-10': 41.0}; sys.exit(0 if len(rows)==10 and all(abs(float(r['fahrenheit'])-exp[r['date']])<0.06 for r in rows) else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  },
+  "fault-wrong_tool": {
+   "fault": "wrong_tool",
+   "line": 12,
+   "text": "Utilise obligatoirement la bibliothèque Python `pandas` pour tout traitement ; aucune autre bibliothèque ni commande shell n'est autorisée pour manipuler les données."
+  },
+  "fault-contradiction": {
+   "fault": "contradiction",
+   "line": 12,
+   "text": "Le résultat final doit impérativement être écrit dans `fahrenheit.csv`."
+  }
+ }
+}

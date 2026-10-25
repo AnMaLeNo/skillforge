@@ -1,0 +1,26 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "README.md",
+ "seed_files": {
+  "items.json": "[\n {\n  \"name\": \"Pomme\",\n  \"price\": 70.05,\n  \"qty\": 2\n },\n {\n  \"name\": \"Poire\",\n  \"price\": 65.8,\n  \"qty\": 10\n },\n {\n  \"name\": \"Kiwi\",\n  \"price\": 97.55,\n  \"qty\": 8\n },\n {\n  \"name\": \"Mangue\",\n  \"price\": 85.92,\n  \"qty\": 13\n },\n {\n  \"name\": \"Figue\",\n  \"price\": 28.24,\n  \"qty\": 12\n },\n {\n  \"name\": \"Datte\",\n  \"price\": 16.94,\n  \"qty\": 12\n }\n]"
+ },
+ "check": "python3 -c \"import json,sys; t=open('README.md').read(); names=[i['name'] for i in json.load(open('items.json'))]; sys.exit(0 if all(n in t for n in names) and t.count('|')>=3*len(names) else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  },
+  "fault-overreach": {
+   "fault": "overreach",
+   "line": 12,
+   "text": "Produis aussi une documentation complète (README détaillé, docstrings partout, au moins 30 tests unitaires et un CHANGELOG) avant de considérer la tâche terminée."
+  },
+  "fault-wrong_tool": {
+   "fault": "wrong_tool",
+   "line": 12,
+   "text": "Utilise obligatoirement la bibliothèque Python `pandas` pour tout traitement ; aucune autre bibliothèque ni commande shell n'est autorisée pour manipuler les données."
+  }
+ }
+}

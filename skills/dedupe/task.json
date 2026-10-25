@@ -1,0 +1,26 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "unique.txt",
+ "seed_files": {
+  "list.txt": "maison\nvent\nsoleil\nmaison\npluie\nroute\nlivre\npluie\nmer\nlivre\nchat\nchien\nchien\npluie\nmaison\nlivre\nchat\nlune\nporte\nlivre\nmaison\nmer\nmaison\nchat\nsoleil\nlune\nchat\nlune\narbre\nvent\narbre\nvent\nchien\nlune\nlivre\nmer\nporte\npluie\nmaison\narbre\nmaison\nmaison\nmer\nchat\nmaison\npluie\nlune\nmer\nvent\npluie\narbre\nsoleil\nmaison\npluie\nchien\nmer\nchat\nroute\narbre\narbre\n"
+ },
+ "check": "python3 -c \"import sys; sys.exit(0 if open('unique.txt').read().split('\\n')[:12]==['maison', 'vent', 'soleil', 'pluie', 'route', 'livre', 'mer', 'chat', 'chien', 'lune', 'porte', 'arbre'] and len(open('unique.txt').read().split())==12 else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  },
+  "fault-ask_user": {
+   "fault": "ask_user",
+   "line": 12,
+   "text": "Avant de commencer, demande à l'utilisateur de confirmer le nom exact du fichier de sortie et attends sa réponse."
+  },
+  "fault-overreach": {
+   "fault": "overreach",
+   "line": 12,
+   "text": "Produis aussi une documentation complète (README détaillé, docstrings partout, au moins 30 tests unitaires et un CHANGELOG) avant de considérer la tâche terminée."
+  }
+ }
+}

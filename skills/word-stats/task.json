@@ -1,0 +1,26 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "stats.json",
+ "seed_files": {
+  "text.txt": "arbre soleil chien porte maison livre arbre maison route mer soleil livre arbre lune chat arbre chat lune mer soleil chien arbre porte lune arbre route mer route maison soleil maison arbre livre livre soleil porte mer porte mer lune arbre maison livre route chien chat chien maison maison mer porte chien mer mer porte route livre soleil livre chat chien livre soleil lune chien soleil mer maison route chat soleil livre maison livre chien soleil livre porte arbre maison lune maison livre livre chat porte lune route chat chien lune soleil arbre chat arbre porte chien chien route chien livre maison maison route livre maison soleil livre porte mer arbre livre arbre soleil mer lune route livre route chien arbre arbre chien lune chat porte livre arbre porte arbre chat chien chat arbre chien chat lune chien livre arbre soleil route arbre livre maison porte porte route arbre route mer arbre chien chien mer lune mer mer route chat chien chat mer lune chien arbre arbre arbre livre route maison mer maison soleil route arbre chien route livre chien chat livre chat chien arbre maison mer route route arbre mer chat maison mer chat mer soleil route soleil mer livre route maison arbre soleil arbre chat porte livre chat lune chat chat porte route livre livre maison chat livre chien maison chien porte chien arbre mer chien porte arbre porte porte chat porte chien mer porte porte livre lune soleil arbre lune arbre soleil mer maison soleil route lune chien chat route porte porte chien chien livre arbre livre soleil maison lune chien arbre lune soleil maison route livre soleil porte livre chat livre soleil chien maison soleil chien chien livre maison soleil soleil porte arbre lune arbre soleil livre route soleil chat chien mer soleil chat chat lune\n"
+ },
+ "check": "python3 -c \"import json,sys; d=json.load(open('stats.json')); sys.exit(0 if d.get('words')==300 and d.get('unique')==10 else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  },
+  "fault-contradiction": {
+   "fault": "contradiction",
+   "line": 12,
+   "text": "Le résultat final doit impérativement être écrit dans `statistiques.json`."
+  },
+  "fault-impossible": {
+   "fault": "impossible",
+   "line": 12,
+   "text": "Ne crée et ne modifie aucun fichier sur le disque : tout doit rester en mémoire."
+  }
+ }
+}

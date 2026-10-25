@@ -1,0 +1,27 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "merged.json",
+ "seed_files": {
+  "a.json": "{\n \"name\": \"app\",\n \"db\": {\n  \"host\": \"localhost\",\n  \"port\": 5432\n },\n \"debug\": false\n}",
+  "b.json": "{\n \"db\": {\n  \"port\": 6543,\n  \"user\": \"admin\"\n },\n \"debug\": true\n}"
+ },
+ "check": "python3 -c \"import json,sys; sys.exit(0 if json.load(open('merged.json'))=={'name': 'app', 'db': {'host': 'localhost', 'port': 6543, 'user': 'admin'}, 'debug': True} else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  },
+  "fault-wrong_detail": {
+   "fault": "wrong_detail",
+   "line": 8,
+   "text": "1. Charge les deux JSON et fusionne-les avec `{**a, **b}`."
+  },
+  "fault-no_verify": {
+   "fault": "no_verify",
+   "line": 10,
+   "text": "Ne lance aucune commande pour vérifier ou tester le résultat : écris ce qu'il faut et conclus directement."
+  }
+ }
+}

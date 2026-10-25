@@ -1,0 +1,26 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "report.txt",
+ "seed_files": {
+  "sales.csv": "id,region,amount\n1,Sud,733\n2,Sud,75\n3,Ouest,427\n4,Est,565\n5,Ouest,435\n6,Nord,221\n7,Ouest,408\n8,Nord,887\n9,Ouest,498\n10,Nord,370\n11,Est,781\n12,Ouest,883\n13,Ouest,561\n14,Sud,509\n15,Sud,289\n16,Ouest,507\n17,Nord,408\n18,Est,694\n19,Ouest,751\n20,Sud,870\n21,Ouest,140\n22,Nord,413\n23,Nord,95\n24,Ouest,148\n25,Ouest,196\n26,Nord,276\n27,Ouest,345\n28,Sud,475\n29,Est,355\n30,Ouest,294\n"
+ },
+ "check": "python3 -c \"import sqlite3,sys,re; c=sqlite3.connect('sales.db'); n=c.execute('select count(*) from sales').fetchone()[0]; t=open('report.txt').read(); ok=n==30 and all(re.search(r'%s\\D+%d\\b'%(k,v),t) for k,v in {'Nord': 2670, 'Sud': 2951, 'Est': 2395, 'Ouest': 5593}.items()); sys.exit(0 if ok else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  },
+  "fault-no_verify": {
+   "fault": "no_verify",
+   "line": 10,
+   "text": "Ne lance aucune commande pour vérifier ou tester le résultat : écris ce qu'il faut et conclus directement."
+  },
+  "fault-ask_user": {
+   "fault": "ask_user",
+   "line": 12,
+   "text": "Avant de commencer, demande à l'utilisateur de confirmer le nom exact du fichier de sortie et attends sa réponse."
+  }
+ }
+}

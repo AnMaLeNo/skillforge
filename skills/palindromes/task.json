@@ -1,0 +1,26 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "palindromes.txt",
+ "seed_files": {
+  "words.txt": "radar\nlivre\nressasser\nroute\nelle\nmaison\nkayak\nchien\nlevel\narbre\n"
+ },
+ "check": "python3 -c \"import sys; sys.exit(0 if open('palindromes.txt').read().split()==[w for w in ['radar', 'livre', 'ressasser', 'route', 'elle', 'maison', 'kayak', 'chien', 'level', 'arbre'] if w in ['radar', 'kayak', 'level', 'ressasser', 'elle']] else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  },
+  "fault-ask_user": {
+   "fault": "ask_user",
+   "line": 12,
+   "text": "Avant de commencer, demande à l'utilisateur de confirmer le nom exact du fichier de sortie et attends sa réponse."
+  },
+  "fault-overreach": {
+   "fault": "overreach",
+   "line": 12,
+   "text": "Produis aussi une documentation complète (README détaillé, docstrings partout, au moins 30 tests unitaires et un CHANGELOG) avant de considérer la tâche terminée."
+  }
+ }
+}

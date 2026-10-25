@@ -1,0 +1,26 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "doc.md",
+ "seed_files": {
+  "doc.md": "# Guide\n\nIntro.\n\n## Installation\n\nTexte de la section installation.\n\n## Configuration\n\nTexte de la section configuration.\n\n## Utilisation\n\nTexte de la section utilisation.\n\n## Dépannage\n\nTexte de la section dépannage.\n\n## Licence\n\nTexte de la section licence.\n"
+ },
+ "check": "python3 -c \"import sys; t=open('doc.md').read(); sys.exit(0 if t.count('](#')>=5 and all(('## '+h) in t for h in ['Installation', 'Configuration', 'Utilisation', 'Dépannage', 'Licence']) and t.index('](#')<t.index('## Installation') else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  },
+  "fault-wrong_tool": {
+   "fault": "wrong_tool",
+   "line": 12,
+   "text": "Utilise obligatoirement la bibliothèque Python `pandas` pour tout traitement ; aucune autre bibliothèque ni commande shell n'est autorisée pour manipuler les données."
+  },
+  "fault-contradiction": {
+   "fault": "contradiction",
+   "line": 12,
+   "text": "Le résultat final doit impérativement être écrit dans `doc_toc.md`."
+  }
+ }
+}

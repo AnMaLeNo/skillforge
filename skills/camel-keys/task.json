@@ -1,0 +1,26 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "config_camel.json",
+ "seed_files": {
+  "config.json": "{\n \"max_retries\": 3,\n \"base_url\": \"http://x\",\n \"timeout_seconds\": 30,\n \"log_level\": \"info\"\n}"
+ },
+ "check": "python3 -c \"import json,sys; sys.exit(0 if json.load(open('config_camel.json'))=={'maxRetries': 3, 'baseUrl': 'http://x', 'timeoutSeconds': 30, 'logLevel': 'info'} else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  },
+  "fault-contradiction": {
+   "fault": "contradiction",
+   "line": 12,
+   "text": "Le résultat final doit impérativement être écrit dans `camel.json`."
+  },
+  "fault-impossible": {
+   "fault": "impossible",
+   "line": 12,
+   "text": "Ne crée et ne modifie aucun fichier sur le disque : tout doit rester en mémoire."
+  }
+ }
+}

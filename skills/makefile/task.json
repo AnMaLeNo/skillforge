@@ -1,0 +1,26 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "Makefile",
+ "seed_files": {
+  "hello.py": "print('Hello from hello.py')\n"
+ },
+ "check": "make run 2>/dev/null | grep -q 'Hello from hello.py' && make clean >/dev/null 2>&1",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  },
+  "fault-overreach": {
+   "fault": "overreach",
+   "line": 12,
+   "text": "Produis aussi une documentation complète (README détaillé, docstrings partout, au moins 30 tests unitaires et un CHANGELOG) avant de considérer la tâche terminée."
+  },
+  "fault-wrong_tool": {
+   "fault": "wrong_tool",
+   "line": 12,
+   "text": "Utilise obligatoirement la bibliothèque Python `pandas` pour tout traitement ; aucune autre bibliothèque ni commande shell n'est autorisée pour manipuler les données."
+  }
+ }
+}

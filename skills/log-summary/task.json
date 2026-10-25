@@ -1,0 +1,26 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "summary.json",
+ "seed_files": {
+  "app.log": "2024-01-01T10:00:00 DEBUG message 0\n2024-01-01T10:01:00 ERROR message 1\n2024-01-01T10:02:00 INFO message 2\n2024-01-01T10:03:00 DEBUG message 3\n2024-01-01T10:04:00 INFO message 4\n2024-01-01T10:05:00 INFO message 5\n2024-01-01T10:06:00 ERROR message 6\n2024-01-01T10:07:00 WARN message 7\n2024-01-01T10:08:00 INFO message 8\n2024-01-01T10:09:00 INFO message 9\n2024-01-01T10:10:00 INFO message 10\n2024-01-01T10:11:00 WARN message 11\n2024-01-01T10:12:00 WARN message 12\n2024-01-01T10:13:00 INFO message 13\n2024-01-01T10:14:00 WARN message 14\n2024-01-01T10:15:00 WARN message 15\n2024-01-01T10:16:00 WARN message 16\n2024-01-01T10:17:00 DEBUG message 17\n2024-01-01T10:18:00 INFO message 18\n2024-01-01T10:19:00 WARN message 19\n2024-01-01T10:20:00 DEBUG message 20\n2024-01-01T10:21:00 ERROR message 21\n2024-01-01T10:22:00 ERROR message 22\n2024-01-01T10:23:00 WARN message 23\n2024-01-01T10:24:00 INFO message 24\n2024-01-01T10:25:00 WARN message 25\n2024-01-01T10:26:00 ERROR message 26\n2024-01-01T10:27:00 INFO message 27\n2024-01-01T10:28:00 INFO message 28\n2024-01-01T10:29:00 ERROR message 29\n2024-01-01T10:30:00 DEBUG message 30\n2024-01-01T10:31:00 DEBUG message 31\n2024-01-01T10:32:00 WARN message 32\n2024-01-01T10:33:00 INFO message 33\n2024-01-01T10:34:00 WARN message 34\n2024-01-01T10:35:00 INFO message 35\n2024-01-01T10:36:00 ERROR message 36\n2024-01-01T10:37:00 INFO message 37\n2024-01-01T10:38:00 INFO message 38\n2024-01-01T10:39:00 ERROR message 39\n2024-01-01T10:40:00 DEBUG message 40\n2024-01-01T10:41:00 ERROR message 41\n2024-01-01T10:42:00 INFO message 42\n2024-01-01T10:43:00 ERROR message 43\n2024-01-01T10:44:00 INFO message 44\n2024-01-01T10:45:00 DEBUG message 45\n2024-01-01T10:46:00 DEBUG message 46\n2024-01-01T10:47:00 INFO message 47\n2024-01-01T10:48:00 DEBUG message 48\n2024-01-01T10:49:00 ERROR message 49\n"
+ },
+ "check": "python3 -c \"import json,sys; sys.exit(0 if json.load(open('summary.json'))=={'INFO': 18, 'WARN': 11, 'ERROR': 11, 'DEBUG': 10} else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  },
+  "fault-wrong_detail": {
+   "fault": "wrong_detail",
+   "line": 8,
+   "text": "1. Récupère le premier champ de chaque ligne (le niveau)."
+  },
+  "fault-no_verify": {
+   "fault": "no_verify",
+   "line": 10,
+   "text": "Ne lance aucune commande pour vérifier ou tester le résultat : écris ce qu'il faut et conclus directement."
+  }
+ }
+}

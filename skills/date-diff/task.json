@@ -1,0 +1,26 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "answer.txt",
+ "seed_files": {
+  "dates.txt": "2023-11-05\n2024-03-17\n"
+ },
+ "check": "python3 -c \"import sys; sys.exit(0 if int(open('answer.txt').read().split()[0])==133 else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  },
+  "fault-ask_user": {
+   "fault": "ask_user",
+   "line": 12,
+   "text": "Avant de commencer, demande à l'utilisateur de confirmer le nom exact du fichier de sortie et attends sa réponse."
+  },
+  "fault-overreach": {
+   "fault": "overreach",
+   "line": 12,
+   "text": "Produis aussi une documentation complète (README détaillé, docstrings partout, au moins 30 tests unitaires et un CHANGELOG) avant de considérer la tâche terminée."
+  }
+ }
+}

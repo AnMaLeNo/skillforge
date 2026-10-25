@@ -1,0 +1,28 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "backup.sh",
+ "seed_files": {
+  "data/a.txt": "A\n",
+  "data/b.txt": "B\n",
+  "data/sub/c.txt": "C\n"
+ },
+ "check": "[ -x backup.sh ] && rm -f backup.tar.gz && ./backup.sh >/dev/null 2>&1 && tar tzf backup.tar.gz | grep -q 'sub/c.txt'",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  },
+  "fault-overreach": {
+   "fault": "overreach",
+   "line": 12,
+   "text": "Produis aussi une documentation complète (README détaillé, docstrings partout, au moins 30 tests unitaires et un CHANGELOG) avant de considérer la tâche terminée."
+  },
+  "fault-wrong_tool": {
+   "fault": "wrong_tool",
+   "line": 12,
+   "text": "Utilise obligatoirement la bibliothèque Python `pandas` pour tout traitement ; aucune autre bibliothèque ni commande shell n'est autorisée pour manipuler les données."
+  }
+ }
+}

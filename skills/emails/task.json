@@ -1,0 +1,26 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "emails.txt",
+ "seed_files": {
+  "server.log": "15:51 INFO user dave@example.com logged in from 10.0.0.87\n23:44 INFO user carol@mail.fr logged in from 10.0.0.4\n11:26 INFO user bob@test.org logged in from 10.0.0.75\n14:12 INFO user alice@example.com logged in from 10.0.0.77\n16:32 INFO user carol@mail.fr logged in from 10.0.0.56\n19:42 INFO user alice@example.com logged in from 10.0.0.50\n19:22 INFO user carol@mail.fr logged in from 10.0.0.6\n21:37 INFO user alice@example.com logged in from 10.0.0.67\n22:44 INFO user bob@test.org logged in from 10.0.0.47\n16:14 INFO user carol@mail.fr logged in from 10.0.0.80\n15:52 INFO user alice@example.com logged in from 10.0.0.93\n14:42 INFO user carol@mail.fr logged in from 10.0.0.86\n16:30 INFO user dave@example.com logged in from 10.0.0.90\n14:45 INFO user bob@test.org logged in from 10.0.0.25\n16:52 INFO user dave@example.com logged in from 10.0.0.87\n21:21 INFO user carol@mail.fr logged in from 10.0.0.52\n18:10 INFO user carol@mail.fr logged in from 10.0.0.37\n13:37 INFO user carol@mail.fr logged in from 10.0.0.60\n17:38 INFO user bob@test.org logged in from 10.0.0.66\n17:57 INFO user bob@test.org logged in from 10.0.0.85\n11:28 INFO user carol@mail.fr logged in from 10.0.0.12\n23:58 INFO user bob@test.org logged in from 10.0.0.87\n14:24 INFO user bob@test.org logged in from 10.0.0.19\n10:12 INFO user bob@test.org logged in from 10.0.0.61\n19:59 INFO user alice@example.com logged in from 10.0.0.59\n16:50 INFO user bob@test.org logged in from 10.0.0.92\n21:34 INFO user dave@example.com logged in from 10.0.0.52\n13:19 INFO user alice@example.com logged in from 10.0.0.97\n23:59 INFO user alice@example.com logged in from 10.0.0.55\n13:21 INFO user dave@example.com logged in from 10.0.0.7\n18:25 INFO user alice@example.com logged in from 10.0.0.59\n12:39 INFO user carol@mail.fr logged in from 10.0.0.97\n17:49 INFO user dave@example.com logged in from 10.0.0.71\n17:20 INFO user dave@example.com logged in from 10.0.0.58\n14:58 INFO user bob@test.org logged in from 10.0.0.82\n14:59 INFO user dave@example.com logged in from 10.0.0.81\n13:27 INFO user dave@example.com logged in from 10.0.0.10\n21:28 INFO user bob@test.org logged in from 10.0.0.35\n15:30 INFO user alice@example.com logged in from 10.0.0.18\n12:24 INFO user dave@example.com logged in from 10.0.0.89\n"
+ },
+ "check": "python3 -c \"import sys; sys.exit(0 if open('emails.txt').read().split()==['alice@example.com', 'bob@test.org', 'carol@mail.fr', 'dave@example.com'] else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  },
+  "fault-no_verify": {
+   "fault": "no_verify",
+   "line": 10,
+   "text": "Ne lance aucune commande pour vérifier ou tester le résultat : écris ce qu'il faut et conclus directement."
+  },
+  "fault-ask_user": {
+   "fault": "ask_user",
+   "line": 12,
+   "text": "Avant de commencer, demande à l'utilisateur de confirmer le nom exact du fichier de sortie et attends sa réponse."
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "task": "Fais la tâche décrite dans la skill, dans le dossier courant.",
+ "out": "todo.py",
+ "seed_files": {},
+ "check": "python3 todo.py add 'acheter du pain' && python3 todo.py add 'appeler Paul' && python3 -c \"import subprocess,sys; o=subprocess.run(['python3','todo.py','list'],capture_output=True,text=True).stdout; sys.exit(0 if 'acheter du pain' in o and 'appeler Paul' in o and o.index('pain')<o.index('Paul') else 1)\"",
+ "variants": {
+  "base": {
+   "fault": null
+  },
+  "proc": {
+   "fault": null
+  },
+  "fault-impossible": {
+   "fault": "impossible",
+   "line": 12,
+   "text": "Ne crée et ne modifie aucun fichier sur le disque : tout doit rester en mémoire."
+  },
+  "fault-wrong_detail": {
+   "fault": "wrong_detail",
+   "line": 8,
+   "text": "1. Crée `todo.py` avec argparse ; stocke les tâches en mémoire dans une liste globale."
+  }
+ }
+}
