@@ -65,28 +65,48 @@ def analyse(skill_text: str, steps: list[transcript.Step], rec: dict | None = No
 
 
 def history(skill_id: str) -> list[dict]:
+    """Entrées Q/R de la skill (clé = chemin de skill, ex. `expose/public`), dans l'ordre d'enregistrement."""
     if not HIST.exists():
         return []
-    return [json.loads(l) for l in HIST.read_text().splitlines() if l.strip() and json.loads(l)["skill"] == skill_id]
+    return [e for e in (json.loads(l) for l in HIST.read_text().splitlines() if l.strip()) if e["skill"] == skill_id]
 
 
-def already_answered(skill_id: str, need: str) -> dict | None:
-    """JEV : une réponse déjà donnée par l'auteur couvre-t-elle ce besoin ? (Choice sur l'historique + none)."""
+def already_answered(skill_id: str, need: str, *, tag: str = "") -> dict:
+    """JEV : une réponse déjà donnée par l'auteur couvre-t-elle ce besoin ? Choice sur l'historique + `none`.
+    Renvoie {entry|None, choice, probabilities} ; sans historique → entry None sans appel."""
     h = history(skill_id)
     if not h:
-        return None
-    crit = {f"R{i+1}": f"Q: {e['question'][:150]} / R: {e['answer'][:200]}" for i, e in enumerate(h)}
-    crit["none"] = "Aucune réponse précédente ne donne cette information."
-    a = jev.answers(jev.ask({"besoin": need, "historique": crit}, {"pick": jev.choice(
-        "Quelle réponse de l'auteur donne déjà l'information dont l'agent a manqué ?", crit)}, tag=f"hist:{skill_id}"))
-    top = a["pick"]
-    return None if top.get("top") == "none" else h[int(top["top"][1:]) - 1]
+        return {"entry": None, "choice": "none", "probabilities": {}}
+    crit = {f"R{i+1}": f"Question : {e['question'][:200]} / Réponse de l'auteur : {e['answer'][:250]}" for i, e in enumerate(h)}
+    crit["none"] = "Aucune réponse précédente ne donne l'information dont l'agent a manqué."
+    a = jev.answers(jev.ask({"besoin_de_l_agent": need, "historique_de_la_skill": crit}, {"pick": jev.choice(
+        "Quelle réponse de l'auteur donne déjà l'information dont l'agent a manqué dans ce run ?", crit)},
+        tag=f"hist:{skill_id}:{tag}"))["pick"]
+    c = a["choice"]
+    return {"entry": None if c == "none" else h[int(c[1:]) - 1], "choice": c, "probabilities": a["probabilities"]}
 
 
-def record_answer(skill_id: str, question: str, answer: str, context: dict) -> None:
+def scope_of(skill_text: str, question: str, answer: str, *, tag: str = "") -> dict:
+    """JEV : la réponse est-elle une règle générale (à intégrer à la skill) ou propre à ce projet/cette fois ?"""
+    a = jev.answers(jev.ask({"skill": skill_text, "question": question, "reponse_auteur": answer}, {
+        "general": jev.noul(
+            "La réponse énonce une règle qui vaudrait pour n'importe quel projet utilisant cette skill.",
+            true="La réponse ne dépend d'aucun nom de projet, date, machine ou chemin particulier, ou énonce une condition générale.",
+            false="La réponse autorise ou décrit une action pour un projet, un hôte ou un moment précis."),
+        "contradicts_skill": jev.noul(
+            "La réponse contredit un passage de la skill.",
+            true="La skill interdit ou déconseille ce que la réponse autorise, ou l'inverse.",
+            false="La réponse précise ou complète la skill sans la contredire."),
+    }, tag=f"scope:{tag}"))
+    return {k: a[k]["noul"] for k in ("general", "contradicts_skill")}
+
+
+def record_answer(skill_id: str, question: str, answer: str, *, passage: str | None = None,
+                  run: str | None = None, scope: str | None = None) -> None:
     HIST.parent.mkdir(parents=True, exist_ok=True)
     with HIST.open("a") as f:
-        f.write(json.dumps({"skill": skill_id, "question": question, "answer": answer, "context": context}, ensure_ascii=False) + "\n")
+        f.write(json.dumps({"skill": skill_id, "question": question, "answer": answer, "passage": passage,
+                            "run": run, "scope": scope}, ensure_ascii=False) + "\n")
 
 
 def packet(skill_text: str, steps: list[transcript.Step], res: dict, rec: dict | None = None, n_steps: int = 6) -> dict:
